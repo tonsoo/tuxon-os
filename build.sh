@@ -9,6 +9,7 @@ HOSTNAME="tuxonos"
 USERNAME="tuxuser"
 RELEASE=false
 MINIMAL=false
+FORCE_CLEAN=false
 
 # Parse args
 for arg in "$@"; do
@@ -16,8 +17,14 @@ for arg in "$@"; do
     --minimal) MINIMAL=true ;;
     --release) RELEASE=true ; MINIMAL=true ;; # release implies minimal
     --clean) echo "🧹 Cleaning up..."; rm -rf "$TARGET_DIR" "$ISO_DIR"; exit 0 ;;
+    --force-clean) FORCE_CLEAN=true ;;
   esac
 done
+
+if [ "$MINIMAL" = true ]; then
+  echo "[+] Forcing clean build..."
+  sudo rm -rf ./src
+fi
 
 echo "📦 Bootstrapping $DISTRO into $TARGET_DIR"
 sudo debootstrap --variant=minbase "$DISTRO" "$TARGET_DIR" "$MIRROR"
@@ -81,8 +88,7 @@ menuentry "Tuxon OS" {
 EOF
 
   # Build ISO
-  grub-mkrescue -o tuxonos.iso "$ISO_DIR" \
-    --compress=xz
+  grub-mkrescue -o tuxonos.iso "$ISO_DIR"
 fi
 
 echo "✅ Build complete!"
