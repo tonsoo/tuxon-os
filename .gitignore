@@ -24,6 +24,9 @@ linux-*/
 /initrd/ # If this is a directory, as seen in your image
 /initrd/*
 
+/iso
+/iso/*
+
 # Root filesystem artifacts (created by scripts/setup-rootfs.sh)
 # This appears directly in your project root /rootfs
 /rootfs/
@@ -32,7 +35,8 @@ linux-*/
 /initrd.img
 
 # ISO image output (created by scripts/build-iso.sh)
-my-linux-distro.iso
+tuxon-os.iso
+vmlinuz
 
 # Common editor and IDE specific files
 .vscode/

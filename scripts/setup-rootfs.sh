@@ -8,6 +8,7 @@ echo "Pre-debootstrap disk usage:"
 du -sh /build
 df -h /build
 
+# Ensure TARGET directory is empty and clean before debootstrap starts
 rm -rf "$TARGET"
 mkdir -p "$TARGET"
 
@@ -25,8 +26,13 @@ mkdir -p "$TARGET/etc" "$TARGET/usr"
 cp -r filesystem/etc "$TARGET/"
 cp -r filesystem/usr "$TARGET/"
 
+# Run commands inside the chrooted environment
 chroot "$TARGET" /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt update"
-chroot "$TARGET" /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y bash vim"
+
+# ADD initramfs-tools HERE!
+chroot "$TARGET" /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y bash vim initramfs-tools"
+#                                                               ^^^^^^^^^^^^^^^^ new
+
 chroot "$TARGET" /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt clean"
 
 echo "✅ RootFS setup complete in $TARGET"

@@ -7,7 +7,7 @@ RUN apt update && apt install -y \
     debootstrap ubuntu-keyring gnupg2 apt-transport-https ca-certificates \
     build-essential bc bison flex libssl-dev libncurses5-dev wget git \
     squashfs-tools xorriso grub-pc-bin cpio initramfs-tools libelf-dev tar gzip xz-utils \
-    curl
+    curl file rsync util-linux
 
 RUN mkdir -p /etc/apt/keyrings && \
     wget -O /etc/apt/keyrings/ubuntu-archive-keyring.gpg https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x437D05B5C176C64D && \
