@@ -46,3 +46,11 @@ lost+found/
 # Clean backup artifacts
 strip-rootfs.sh~
 build.sh~
+
+# Diretórios temporários da construção da ISO
+temp_iso_mount/
+edit_chroot/
+iso_stage/
+
+# Saída da ISO final
+output_iso/
