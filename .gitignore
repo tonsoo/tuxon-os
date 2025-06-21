@@ -1,48 +1,43 @@
-# OS Build output
-/src
-/iso
-/tuxonos.iso
+# Docker build context exclusions - ensure source files are kept in git
+!build.sh
+!Dockerfile
+!filesystem/
+!kernel/
+!scripts/
 
-# Docker
-docker/dev-rootfs
-docker/.cache
-docker/*.log
-*.pid
+# Output directory for the final ISO (on host)
+/output/
 
-# Common temp and backup files
-*.swp
-*.swo
-*.bak
-*~
-.DS_Store
-Thumbs.db
+# Temporary build directories created inside the Docker container
+# These are typically in /build within the container, which maps to the host's volume.
+# Anything created by the Docker container inside its /build directory.
+/build/
 
-# Python bytecode (if used for build scripts)
-__pycache__/
-*.py[cod]
+# Kernel source and build artifacts (created by kernel/build-kernel.sh)
+# These appear directly in your project root after copying from /build.
+linux-*.tar.xz
+linux-*/
 
-# Logs and generated metadata
-*.log
-*.lock
-*.tmp
-*.tar.gz
-*.squashfs
+# Kernel modules and related build artifacts that appear in project root /lib
+# Based on your image: lib/modules/6.9.0/kernel/build/
+/lib/
+/initrd/ # If this is a directory, as seen in your image
+/initrd/*
 
-# System files (e.g., mounted volumes)
-media/
-mnt/
-lost+found/
+# Root filesystem artifacts (created by scripts/setup-rootfs.sh)
+# This appears directly in your project root /rootfs
+/rootfs/
 
-# Editor/IDE files
+# Initrd image output (created by scripts/build-initrd.sh)
+/initrd.img
+
+# ISO image output (created by scripts/build-iso.sh)
+my-linux-distro.iso
+
+# Common editor and IDE specific files
 .vscode/
 .idea/
-*.code-workspace
-
-# Build scripts cache (if used)
-/build/
-/output/
-/.cache
-
-# Clean backup artifacts
-strip-rootfs.sh~
-build.sh~
+*.swp
+*.swo
+*~
+.#*
