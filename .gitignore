@@ -1,48 +1,24 @@
-# OS Build output
-/src
-/iso
-/tuxonos.iso
+# Ignore live-build output directories
+config/
+cache/
+chroot/
+binary/
+local/
+.build/
+.tmp/
+# lb config sometimes outputs stage directories
+.stage/
 
-# Docker
-docker/dev-rootfs
-docker/.cache
-docker/*.log
-*.pid
-
-# Common temp and backup files
-*.swp
-*.swo
-*.bak
-*~
-.DS_Store
-Thumbs.db
-
-# Python bytecode (if used for build scripts)
-__pycache__/
-*.py[cod]
-
-# Logs and generated metadata
+# Ignore log files
 *.log
-*.lock
-*.tmp
-*.tar.gz
+
+# Ignore any generated ISOs
+*.iso
+
+# Ignore any transient files
+*.img
 *.squashfs
+*.zsync
 
-# System files (e.g., mounted volumes)
-media/
-mnt/
-lost+found/
-
-# Editor/IDE files
-.vscode/
-.idea/
-*.code-workspace
-
-# Build scripts cache (if used)
-/build/
-/output/
-/.cache
-
-# Clean backup artifacts
-strip-rootfs.sh~
-build.sh~
+# Ignore build stamps or other temp files
+*.buildstamp

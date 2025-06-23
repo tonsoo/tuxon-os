@@ -1,0 +1,12 @@
+/casper
+/casper/filesystem.manifest
+/casper/filesystem.manifest-remove
+/casper/filesystem.size
+/casper/filesystem.squashfs
+/casper/initrd.img-6.8.0-62-generic
+/casper/memtest
+/casper/vmlinuz-6.8.0-62-generic
+/.disk
+/.disk/casper-uuid-6.8.0-62-generic
+/.disk/info
+/SHA256SUMS
