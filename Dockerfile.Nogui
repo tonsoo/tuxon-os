@@ -1,0 +1,52 @@
+FROM ubuntu
+
+RUN apt update && apt upgrade -y && DEBIAN_FRONTEND=noninteractive apt install -y \
+    bzip2 git vim make gcc libncurses-dev \
+    flex bison bc cpio libelf-dev libssl-dev \
+    syslinux dosfstools mtools qemu-system-x86
+
+WORKDIR /distro
+
+# Create default structure and copy needed files in advance
+RUN mkdir -p /distro/boot/initramfs
+COPY boot/initramfs/init /distro/boot/initramfs
+RUN chmod +x /distro/boot/initramfs/init
+
+# Clone linux repo to distro/linux
+RUN git clone --depth 1 https://github.com/torvalds/linux linux
+
+# Set-up kernel build configs and build kernel
+RUN cd /distro/linux && \
+    make defconfig && \
+    sed -i 's/^# CONFIG_64BIT is not set/CONFIG_64BIT=y/' .config && \
+    sed -i 's/^CONFIG_64BIT=n/CONFIG_64BIT=y/' .config && \
+    make oldconfig && \
+    make -j 8 && \
+    cp /distro/linux/arch/x86/boot/bzImage /distro/boot
+
+# Clone busybox repo
+RUN git clone --depth 1 https://git.busybox.net/busybox busybox
+
+# Configure and build busy box menu
+RUN cd busybox && \
+    make defconfig && \
+    sed -i 's/^# CONFIG_STATIC is not set/CONFIG_STATIC=y/' .config && \
+    sed -i 's/^CONFIG_STATIC=n/CONFIG_STATIC=y/' .config && \
+    sed -i 's/^CONFIG_TC=y/# CONFIG_TC is not set/' .config && \
+    make oldconfig && \
+    make -j 8 && \
+    make CONFIG_PREFIX=/distro/boot/initramfs install
+
+# Remove unecessary file if it exists
+RUN [ -e "/distro/boot/initramfs/linuxrc" ] && rm -rf /distro/boot/initramfs/linuxrc
+
+RUN find /distro/boot/initramfs | cpio -o -H newc > /distro/boot/init.cpio
+
+RUN cd /distro/boot && \
+    dd if=/dev/zero of=boot bs=1M count=50 && \
+    mkfs.fat boot && \
+    syslinux boot && \
+    mcopy -i boot bzImage ::/ && \
+    mcopy -i boot init.cpio ::/
+
+CMD [ "qemu-system-x86_64", "-drive", "file=/distro/boot/boot,format=raw", "-nographic" ]
