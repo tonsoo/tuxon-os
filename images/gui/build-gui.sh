@@ -22,3 +22,5 @@ docker run --privileged \
 
 docker stop "$DOCKER_NAME"
 docker rm "$DOCKER_NAME"
+
+qemu-system-x86_64 "$LOCAL_BOOT_DIR/boot.img" -vga cirrus

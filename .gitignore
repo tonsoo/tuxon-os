@@ -1,2 +1,5 @@
-boot/boot
-boot/.*
+images/gui/boot-gui
+images/gui/boot-gui/*
+
+images/nogui/boot-nogui
+images/nogui/boot-nogui/*

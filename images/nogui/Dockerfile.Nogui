@@ -18,8 +18,17 @@ RUN git clone --depth 1 https://github.com/torvalds/linux linux
 # Set-up kernel build configs and build kernel
 RUN cd /distro/linux && \
     make defconfig && \
-    sed -i 's/^# CONFIG_64BIT is not set/CONFIG_64BIT=y/' .config && \
-    sed -i 's/^CONFIG_64BIT=n/CONFIG_64BIT=y/' .config && \
+    ./scripts/config --set-val CONFIG_INITRAMFS_SOURCE "/distro/boot/initramfs" \
+                    --set-val CONFIG_INITRAMFS_ROOT_UID 0 \
+                    --set-val CONFIG_INITRAMFS_ROOT_GID 0 \
+                    --enable CONFIG_BLK_DEV_INITRD \
+                    --enable CONFIG_RD_GZIP \
+                    --enable CONFIG_DEVTMPFS \
+                    --enable CONFIG_DEVTMPFS_MOUNT \
+                    --enable CONFIG_TTY \
+                    --enable CONFIG_SERIAL_8250 \
+                    --enable CONFIG_SERIAL_8250_CONSOLE \
+                    --enable CONFIG_64BIT && \
     make oldconfig && \
     make -j 8 && \
     cp /distro/linux/arch/x86/boot/bzImage /distro/boot
@@ -39,5 +48,9 @@ RUN cd busybox && \
 
 # Remove unecessary file if it exists
 RUN [ -e "/distro/boot/initramfs/linuxrc" ] && rm -rf /distro/boot/initramfs/linuxrc
+
+RUN cd /distro/boot/initramfs && \
+    mkdir -p proc sys dev && \
+    find . | cpio -o -H newc | gzip > /distro/boot/initramfs.cpio.gz
 
 RUN find /distro/boot/initramfs | cpio -o -H newc > /distro/boot/init.cpio

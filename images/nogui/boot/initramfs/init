@@ -1,42 +1,13 @@
 #!/bin/sh
 
-# Set up the console for output
-# You might need to change 'console' to 'ttyS0' or similar based on your QEMU setup
-# and kernel configuration for console output.
-# The `APPEND console=ttyS0` in syslinux.cfg helps direct kernel messages there.
-# Ensure that your BusyBox build includes 'mknod' for this to work.
-# Alternatively, if BusyBox's 'mdev' is configured and run, it can create devices.
+# Mount required filesystems
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
 
-echo "Starting initramfs..."
+# Give system some time to settle
+sleep 1
 
-# Create essential directories
-mkdir -p /proc
-mkdir -p /sys
-mkdir -p /dev
-mkdir -p /tmp
-mkdir -p /root # For your shell to have a home directory
-
-# Mount virtual filesystems
-mount -t proc none /proc
-mount -t sysfs none /sys
-
-# Populate /dev (method 1: manual mknod - good for debugging)
-# If your busybox doesn't have mknod, you might need to enable it, or use mdev
-# mknod -m 600 /dev/console c 5 1 # Example, check kernel docs for exact types/numbers
-# mknod -m 666 /dev/null c 1 3
-# mknod -m 666 /dev/tty c 5 0
-# mknod -m 666 /dev/ttyS0 c 4 64 # If using serial console
-# mknod -m 666 /dev/zero c 1 5
-
-# Populate /dev (method 2: using devtmpfs - recommended)
-# This requires your kernel to have CONFIG_DEVTMPFS=y
-mount -t devtmpfs none /dev
-
-# Populate /dev (method 3: using BusyBox mdev - alternative if devtmpfs is not an option)
-# This requires your BusyBox build to include 'mdev' and its dependencies.
-# echo "/sbin/mdev" > /proc/sys/kernel/hotplug
-# mdev -s
-
-# Now, execute the shell.
-echo "Dropping to a shell..."
-exec /bin/sh -l # -l makes it a login shell, might read .profile etc.
+# Print some info
+echo "Successfully mounted virtual filesystems"
+exec /bin/sh

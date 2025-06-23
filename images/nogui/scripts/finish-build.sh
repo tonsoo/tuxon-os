@@ -5,14 +5,23 @@ set -e
 mkdir -p /output
 cd /distro/boot
 
-dd if=/dev/zero of=boot bs=1M count=50
-mkdir -p m
+truncate -s 50M boot
 mkfs -t fat boot
 syslinux boot
+
+mkdir -p m
 mount boot m
+
+cat <<EOF > m/syslinux.cfg
+DEFAULT linux
+LABEL linux
+    KERNEL bzImage
+    APPEND initrd=init.cpio quiet
+EOF
 cp bzImage init.cpio m
+
 umount m
 
-cp boot /output
+cp boot bzImage init.cpio /output
 
 exit 0

@@ -23,4 +23,9 @@ docker run --privileged \
 docker stop "$DOCKER_NAME"
 docker rm "$DOCKER_NAME"
 
-qemu-system-x86_64 -drive file="$LOCAL_BOOT_DIR/boot",format=raw -nographic
+# qemu-system-x86_64 "$LOCAL_BOOT_DIR/boot"
+qemu-system-x86_64 \
+    -kernel "$LOCAL_BOOT_DIR/bzImage" \
+    -initrd "$LOCAL_BOOT_DIR/init.cpio" \
+    -append "console=ttyS0 earlyprintk=serial root=/dev/ram0 rw init=/init" \
+    -nographic
