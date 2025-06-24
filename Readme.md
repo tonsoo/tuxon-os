@@ -84,3 +84,23 @@ Adicionalmente, o `Dockerfile` contém comandos `sed` que substituem várias oco
 * `/etc/hostname`
 * `/etc/casper.conf` (para nomes de usuário e sistema "live")
 * `/etc/lsb-release`
+
+
+Algoritmo para Pós-Instalação do TuxonOS
+
+Passos:
+1. Abrir terminal
+   - Inicie o terminal no sistema.
+
+2. Navegar até a pasta do script
+   - Use o comando: cd /home/seu-usuario/
+   - Substitua "seu-usario" pelo nome do seu usuário.
+
+3. Configurar permissões do script
+   - Execute: chmod +x post-install.sh
+
+4. Executar o script com superusuário
+   - Execute: sudo ./post-install.sh
+
+Observação:
+- O script requer permissões de superusuário, então o uso de sudo é necessário.
